@@ -10,4 +10,3 @@ allowBuilds:
   core-js: true
   esbuild: true
   prisma: true
-onlyBuiltDependencies: prisma @prisma/client @prisma/engines esbuild @nestjs/core
