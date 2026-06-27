@@ -13,7 +13,8 @@
     "clean": "rimraf dist",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
