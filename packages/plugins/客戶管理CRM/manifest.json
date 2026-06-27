@@ -1,0 +1,15 @@
+{
+  "id": "crm",
+  "name": "客戶管理 CRM",
+  "version": "1.0.0",
+  "description": "建立客戶資料庫，記錄聯絡資訊、消費歷史與備註，支援標籤分類與搜尋。讓您輕鬆掌握每一位顧客的喜好與習慣。",
+  "icon": "users",
+  "category": "customer",
+  "industries": ["restaurant", "beauty", "fitness", "clinic", "education", "retail", "other"],
+  "serverEntry": null,
+  "routes": [
+    { "path": "/app/crm", "label": "客戶管理", "icon": "users", "component": null }
+  ],
+  "permissions": ["crm:read", "crm:write"],
+  "minTier": "free"
+}

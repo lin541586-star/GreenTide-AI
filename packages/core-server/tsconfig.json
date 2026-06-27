@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "rootDir": "src",
+    "paths": {
+      "@shop/shared-types": ["../shared-types/dist"],
+      "@shop/shared-types/*": ["../shared-types/dist/*"]
+    }
+  },
+  "include": ["src"]
+}

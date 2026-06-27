@@ -1,0 +1,288 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ 店家/租戶 ============
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  industry  String   @default("other") // restaurant | retail | beauty | fitness | clinic | education | other
+  plan      String   @default("free") // free | basic | pro | enterprise
+  aiConfig  String   @default("{}") // JSON { provider, geminiApiKey, deepseekApiKey, geminiModel, deepseekModel }
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users           User[]
+  pluginRegistries PluginRegistry[]
+  services        Service[]
+}
+
+// ============ 使用者 ============
+model User {
+  id        String   @id @default(uuid())
+  tenantId  String
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("staff") // owner | admin | manager | staff
+  roleId    String?  // 關聯權限角色
+  active    Boolean  @default(true)
+
+  roleDef   Role?    @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([email])
+}
+
+// ============ Plugin 註冊 (店家啟用哪些工具) ============
+model PluginRegistry {
+  id        String   @id @default(uuid())
+  tenantId  String
+  pluginId  String
+  enabled   Boolean  @default(true)
+  config    String     @default("{}")
+  installedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, pluginId])
+  @@index([pluginId])
+}
+
+// ============ 日曆預約 - 服務人員 ============
+model Staff {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  title     String?
+  bio       String?
+  color     String   @default("#6366F1") // 日曆上區別人員的顏色
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availabilities Availability[]
+  bookings       Booking[]
+
+  @@index([tenantId])
+}
+
+// ============ 日曆預約 - 服務人員可用時段 ============
+model Availability {
+  id        String   @id @default(uuid())
+  staffId   String
+  dayOfWeek Int      // 0=Sun, 6=Sat
+  startTime String   // HH:mm
+  endTime   String   // HH:mm
+  createdAt DateTime @default(now())
+
+  staff Staff @relation(fields: [staffId], references: [id])
+
+  @@index([staffId])
+}
+
+// ============ 日曆預約 - 預約記錄 ============
+model Booking {
+  id          String   @id @default(uuid())
+  tenantId    String
+  staffId     String
+  serviceId   String?  // 預約了哪個服務項目
+  customerName   String
+  customerContact String? // IG/FB/LINE ID 或電話
+  source      String   @default("manual") // manual | line | fb | ig
+  date        String   // YYYY-MM-DD
+  startTime   String   // HH:mm
+  endTime     String   // HH:mm
+  status      String   @default("pending") // pending | confirmed | cancelled | completed
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  staff   Staff    @relation(fields: [staffId], references: [id])
+  service Service? @relation(fields: [serviceId], references: [id])
+
+  @@index([tenantId])
+  @@index([staffId, date])
+  @@index([serviceId])
+}
+
+// ============ 日曆預約 - 服務項目（商家自訂） ============
+model Service {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String   // e.g. 剪髮、染髮、全身按摩
+  duration  Int      // 分鐘數 e.g. 60
+  price     Int?     // 選填，基礎價格（元）
+  priceTiers String? // JSON: [{"label":"短髮","price":1200},{"label":"中長髮","price":1800}]
+  color     String   @default("#3B82F6") // 日曆上顯示的顏色
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[]
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, active])
+}
+
+// ============ AI 自訂應答規則 ============
+model AiRule {
+  id        String   @id @default(uuid())
+  tenantId  String
+  rule      String
+  refinedRule String?  // AI 優化後的規則（優化後每次 system prompt 用這個，不消耗 token）
+  enabled   Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, enabled])
+}
+
+// ============ AI 對話記錄 ============
+model Conversation {
+  id        String   @id @default(uuid())
+  tenantId  String
+  source    String   // line | fb | ig
+  customerId String
+  messages  String     @default("[]") // [{role, content, time}]
+  sessionId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, sessionId])
+}
+
+// ============ 營業時間設定 ============
+model BusinessHour {
+  id         String   @id @default(uuid())
+  tenantId   String
+  dayOfWeek  Int      // 0=Sun, 1=Mon ... 6=Sat
+  openTime   String?  // HH:mm，null 表示當天公休
+  closeTime  String?  // HH:mm
+  isOpen     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([tenantId, dayOfWeek])
+  @@index([tenantId])
+}
+
+// ============ 權限角色設定 ============
+model Role {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String   // 管理員 | 操作員 | 使用者
+  level       Int      @default(99) // 10=管理員 20=操作員 30=使用者
+  isSystem    Boolean  @default(false) // 系統預設角色不可刪除
+  permissions String   @default("[]") // JSON array of permission codes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users User[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+}
+
+// ============ CRM 客戶管理 ============
+model Customer {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  phone       String?
+  email       String?
+  notes       String?
+  tags        String   @default("[]") // JSON array
+  totalVisits Int      @default(0)
+  totalSpent  Float    @default(0)
+  lastVisitAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, name])
+}
+
+// ============ 智慧通知 - 通知模板 ============
+model NotificationTemplate {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  channel   String   @default("line") // line | email | both
+  subject   String?  // email 主旨
+  content   String   // 訊息內容，支援 {{變數}}
+  triggers  String   @default("[]") // JSON array of trigger events
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+// ============ 智慧通知 - 發送記錄 ============
+model NotificationLog {
+  id         String   @id @default(uuid())
+  tenantId   String
+  templateId String?
+  recipient  String   // LINE ID 或 Email
+  channel    String   // line | email
+  subject    String?
+  content    String
+  status     String   @default("pending") // pending | sent | failed
+  error      String?
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId])
+}
+
+// ============ 庫存管理 - 商品 ============
+model Product {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  sku         String?  // 商品編號
+  category    String   @default("general")
+  quantity    Int      @default(0)
+  minStock    Int      @default(5) // 低庫存警戒線
+  unit        String   @default("個") // 個、箱、公斤等
+  price       Float?
+  cost        Float?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  movements InventoryMovement[]
+
+  @@index([tenantId])
+  @@index([tenantId, category])
+}
+
+// ============ 庫存管理 - 異動記錄 ============
+model InventoryMovement {
+  id        String   @id @default(uuid())
+  productId String
+  type      String   // in(進貨) | out(出貨/消耗)
+  quantity  Int
+  note      String?
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+}

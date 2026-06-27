@@ -1,0 +1,16 @@
+{
+  "id": "calendar-booking",
+  "name": "日曆預約系統",
+  "version": "1.0.0",
+  "description": "整合 IG/FB/LINE 的 AI 智慧預約管理，支援多服務人員排程",
+  "icon": "calendar",
+  "category": "booking",
+  "industries": ["restaurant", "beauty", "fitness", "clinic", "education", "other"],
+  "serverEntry": "./server/module.ts",
+  "routes": [
+    { "path": "/app/calendar-booking", "label": "預約管理", "icon": "calendar", "component": "./web/pages/BookingPage" },
+    { "path": "/app/calendar-booking/staff", "label": "服務人員設定", "icon": "users", "component": "./web/pages/StaffSettings" }
+  ],
+  "permissions": ["booking:read", "booking:write"],
+  "minTier": "free"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "analytics",
+  "name": "營運報表分析",
+  "version": "1.0.0",
+  "description": "圖表化呈現營收趨勢、服務項目排行、人員績效統計等關鍵營運數據。支援日/週/月報表，幫助您做出數據驅動的經營決策。",
+  "icon": "chart-bar",
+  "category": "analytics",
+  "industries": ["restaurant", "beauty", "fitness", "clinic", "education", "retail", "other"],
+  "serverEntry": null,
+  "routes": [
+    { "path": "/app/analytics", "label": "營運報表", "icon": "chart-bar", "component": null }
+  ],
+  "permissions": ["analytics:read"],
+  "minTier": "free"
+}

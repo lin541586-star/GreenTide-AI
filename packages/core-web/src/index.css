@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   主題配色系統（由 ThemeSettings 控制）
+   ============================================ */
+:root {
+  --bg-main: #f5f3f0;
+  --bg-sidebar: rgba(255, 255, 255, 0.72);
+  --accent: #1d1d1f;
+  --accent-text: #ffffff;
+  --text-primary: #1d1d1f;
+  --text-secondary: #8a8885;
+  --border-color: #d2d2d7;
+  --hover-bg: #f4f3f0;
+  --selection-bg: rgba(0, 0, 0, 0.85);
+  --chat-bg: #fafafa;
+  --chat-bubble-user: #1d1d1f;
+  --chat-bubble-user-text: #ffffff;
+  --chat-bubble-ai: #ffffff;
+  --chat-bubble-ai-text: #1d1d1f;
+  --btn-primary-bg: #1d1d1f;
+  --btn-secondary-bg: #f4f3f0;
+  --container-bg: #ffffff;
+  --panel-blur: 0px;
+  /* 向後相容 alias */
+  --section-bg: var(--container-bg);
+  --modal-bg: var(--container-bg);
+  --border-light: var(--border-color);
+}
+
+/* ============================================
+   Apple Design System — 極簡美學基底
+   ============================================ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply font-sans;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  ::selection {
+    background: var(--selection-bg);
+    color: #ffffff;
+  }
+
+  /* Apple 風格滾動條 */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d2d2d7;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #aeaeb2;
+  }
+}
+
+/* ============================================
+   Apple 風格組件
+   ============================================ */
+
+@layer components {
+  /* 毛玻璃效果 — 謹慎使用，只在需要深度的元素 */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .glass-dark {
+    background: rgba(28, 28, 30, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* 分隔線 — 極細 0.5px */
+  .hairline {
+    border: 0;
+    height: 0.5px;
+    background: #d2d2d7;
+  }
+
+  /* 焦點環 */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d1d1f] focus-visible:ring-offset-2 focus-visible:ring-offset-white transition-shadow;
+  }
+
+  /* Apple 按鈕基底 */
+  .btn-apple {
+    @apply inline-flex items-center justify-center rounded-lg text-sm font-medium
+           transition-all duration-200 ease-out
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d1d1f]
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* 卡片 hover 效果 */
+  .card-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+  .card-hover:hover {
+    @apply shadow-apple-md -translate-y-0.5;
+  }
+
+  /* ============================
+     主題變數覆寫 — 讓所有頁面固定色值自動套用主題
+     定義在 @layer components（權重高於 utilities）
+     ============================ */
+  .bg-white { background-color: var(--container-bg); backdrop-filter: blur(var(--panel-blur)); -webkit-backdrop-filter: blur(var(--panel-blur)); }
+  .bg-black { background-color: var(--accent); }
+  .bg-\[\#1d1d1f\] { background-color: var(--btn-primary-bg); }
+  .bg-\[\#f4f3f0\] { background-color: var(--btn-secondary-bg); }
+  .bg-\[\#f5f5f7\] { background-color: var(--btn-secondary-bg); }
+  .text-\[\#1d1d1f\] { color: var(--text-primary); }
+  .text-\[\#8a8885\] { color: var(--text-secondary); }
+  .text-\[\#86868b\] { color: var(--text-secondary); }
+  .text-\[\#aeaeb2\] { color: var(--text-secondary); }
+  .text-\[\#636366\] { color: var(--text-secondary); }
+  .border-\[\#d2d2d7\] { border-color: var(--border-color); }
+  .border-\[\#e8e8ed\] { border-color: var(--border-color); }
+  .hover\:bg-\[\#f4f3f0\]:hover { background-color: var(--hover-bg); }
+  .hover\:bg-\[\#e8e8ed\]:hover { background-color: var(--hover-bg); }
+}
+
+/* ============================================
+   動畫
+   ============================================ */
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.25s ease-out;
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}

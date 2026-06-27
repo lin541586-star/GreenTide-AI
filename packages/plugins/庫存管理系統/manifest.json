@@ -1,0 +1,15 @@
+{
+  "id": "inventory",
+  "name": "庫存管理系統",
+  "version": "1.0.0",
+  "description": "追蹤商品庫存數量、管理進出貨記錄，設定低庫存警戒線。適用於零售商品、美容材料、餐飲原料等各類庫存管理。",
+  "icon": "package",
+  "category": "inventory",
+  "industries": ["restaurant", "beauty", "fitness", "clinic", "retail", "other"],
+  "serverEntry": null,
+  "routes": [
+    { "path": "/app/inventory", "label": "庫存管理", "icon": "package", "component": null }
+  ],
+  "permissions": ["inventory:read", "inventory:write"],
+  "minTier": "free"
+}

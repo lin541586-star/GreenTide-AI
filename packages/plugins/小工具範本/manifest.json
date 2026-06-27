@@ -1,0 +1,20 @@
+{
+  "id": "plugin-template",
+  "name": "客製工具範本",
+  "version": "1.0.0",
+  "description": "供開發者參考的自訂工具範本，複製此目錄即可快速建立新工具",
+  "icon": "puzzle",
+  "category": "other",
+  "industries": ["other"],
+  "serverEntry": "./server/module.ts",
+  "routes": [
+    {
+      "path": "/app/plugin-template",
+      "label": "範本功能",
+      "icon": "puzzle",
+      "component": "./web/pages/MyPage"
+    }
+  ],
+  "permissions": ["read", "write"],
+  "minTier": "free"
+}

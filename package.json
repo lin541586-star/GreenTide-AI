@@ -1,0 +1,23 @@
+{
+  "name": "shop-management-system",
+  "private": true,
+  "description": "多行業店面管理系統 - 可插拔小工具架構",
+  "scripts": {
+    "dev:server": "pnpm --filter @shop/core-server dev",
+    "dev:web": "pnpm --filter @shop/core-web dev",
+    "dev": "concurrently --no-color \"pnpm --filter @shop/core-server dev\" \"pnpm --filter @shop/core-web dev\"",
+    "build:server": "pnpm --filter @shop/core-server build",
+    "build:web": "pnpm --filter @shop/core-web build",
+    "build": "pnpm run --parallel build:server build:web",
+    "start": "NODE_ENV=production node packages/core-server/dist/main.js",
+    "db:migrate": "pnpm --filter @shop/core-server db:migrate",
+    "db:seed": "pnpm --filter @shop/core-server db:seed",
+    "db:generate": "pnpm --filter @shop/core-server db:generate",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "notification",
+  "name": "智慧通知系統",
+  "version": "1.0.0",
+  "description": "建立通知模板，自動發送預約提醒、促銷訊息等。支援 LINE 與 Email 多渠道發送，告別手忙腳亂的漏通知。",
+  "icon": "bell",
+  "category": "marketing",
+  "industries": ["restaurant", "beauty", "fitness", "clinic", "education", "retail", "other"],
+  "serverEntry": null,
+  "routes": [
+    { "path": "/app/notifications", "label": "通知系統", "icon": "bell", "component": null }
+  ],
+  "permissions": ["notification:read", "notification:write"],
+  "minTier": "free"
+}
