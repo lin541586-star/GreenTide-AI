@@ -9,7 +9,7 @@
     "dev": "concurrently --no-color \"pnpm --filter @shop/core-server dev\" \"pnpm --filter @shop/core-web dev\"",
     "build:server": "pnpm --filter @shop/core-server build",
     "build:web": "pnpm --filter @shop/core-web build",
-    "build": "pnpm run --parallel build:server build:web",
+    "build": "pnpm db:generate && pnpm run --parallel build:server build:web",
     "start": "node packages/core-server/dist/main.js",
     "db:migrate": "pnpm --filter @shop/core-server db:migrate",
     "db:seed": "pnpm --filter @shop/core-server db:seed",
