@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20-bullseye
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NODE_ENV=production
@@ -14,7 +14,7 @@ COPY packages/core-web/package.json packages/core-web/package.json
 COPY packages/shared-types/package.json packages/shared-types/package.json
 RUN pnpm install --no-frozen-lockfile
 
-# 複製全部原始碼（含 schema.prisma，binaryTargets 生效）
+# 複製全部原始碼（含 schema.prisma）
 COPY . .
 
 # Prisma client 生成 + 建置
