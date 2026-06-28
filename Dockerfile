@@ -2,6 +2,10 @@ FROM node:20-slim
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NODE_ENV=production
+
+# Prisma 需要 OpenSSL（slim 不含）
+RUN apt-get update && apt-get install -y openssl libssl-dev ca-certificates && rm -rf /var/lib/apt/lists/*
+
 RUN npm install -g corepack@0.24.1 && corepack enable
 WORKDIR /app
 
