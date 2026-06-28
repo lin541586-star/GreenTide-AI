@@ -10,7 +10,7 @@
     "build:server": "pnpm --filter @shop/core-server build",
     "build:web": "pnpm --filter @shop/core-web build",
     "build": "pnpm run --parallel build:server build:web",
-    "start": "NODE_ENV=production pnpm --filter @shop/core-server db:push; node packages/core-server/dist/main.js",
+    "start": "node packages/core-server/dist/main.js",
     "db:migrate": "pnpm --filter @shop/core-server db:migrate",
     "db:seed": "pnpm --filter @shop/core-server db:seed",
     "db:generate": "pnpm --filter @shop/core-server db:generate",

@@ -49,8 +49,15 @@ async function bootstrap() {
     });
   }
 
-  const port = config.get('SERVER_PORT', 3000);
-  await app.listen(port);
-  console.log(`伺服器已啟動: http://localhost:${port}`);
+  // Health check 端點（不依賴資料庫，讓 Railway 能快速確認服務存活）
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/health', (req: any, res: any) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+  });
+
+  // Railway 會透過 PORT 環境變數動態分配 port
+  const port = parseInt(process.env.PORT || config.get('SERVER_PORT', '3000'), 10);
+  await app.listen(port, '0.0.0.0');
+  console.log(`伺服器已啟動: port ${port}`);
 }
 bootstrap();
