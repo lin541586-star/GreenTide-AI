@@ -13,6 +13,7 @@
     "start": "node packages/core-server/dist/main.js",
     "db:migrate": "pnpm --filter @shop/core-server db:migrate",
     "db:seed": "pnpm --filter @shop/core-server db:seed",
+    "db:push": "pnpm --filter @shop/core-server db:push",
     "db:generate": "pnpm --filter @shop/core-server db:generate",
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean"
