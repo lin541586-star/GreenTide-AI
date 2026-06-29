@@ -5,6 +5,7 @@ services:
     repo: https://github.com/lin541586-star/GreenTide-AI
     plan: free
     buildCommand: npm install -g pnpm && pnpm install --no-frozen-lockfile && pnpm db:generate && pnpm build:server && pnpm build:web
+    preDeployCommand: pnpm db:seed
     startCommand: node packages/core-server/dist/main.js
     healthCheckPath: /health
     envVars:
