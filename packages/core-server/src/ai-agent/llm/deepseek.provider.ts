@@ -62,4 +62,29 @@ export class DeepSeekProvider implements ILlmProvider {
       return { text: `抱歉，AI 處理時發生錯誤。(${err.message})` };
     }
   }
+
+  /** 圖片分析（DeepSeek V4 Flash 支援多模態視覺） */
+  async visionChat(imageBase64: string, mimeType: string, prompt: string): Promise<LlmResponse> {
+    try {
+      const dataUrl = `data:${mimeType};base64,${imageBase64}`;
+      const completion = await this.client.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              { type: 'image_url', image_url: { url: dataUrl } },
+            ],
+          },
+        ] as any,
+      });
+      const text = completion.choices[0]?.message?.content || '';
+      return { text };
+    } catch (err: any) {
+      this.logger.error(`DeepSeek Vision 錯誤: ${err.message}`);
+      this.logger.error(JSON.stringify(err?.response?.data || err));
+      return { text: '' };
+    }
+  }
 }
