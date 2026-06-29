@@ -36,24 +36,24 @@ async function bootstrap() {
   // API 前綴
   app.setGlobalPrefix('api');
 
+  // Health check 端點（不依賴資料庫，放在 SPA 中間件之前）
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/health', (req: any, res: any) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+  });
+
   // 生產環境：服務前端靜態檔案
   const isProd = process.env.NODE_ENV === 'production';
   if (isProd) {
     const frontendDist = join(__dirname, '..', '..', 'core-web', 'dist');
     app.useStaticAssets(frontendDist);
     app.setViewEngine('html');
-    // 所有非 API 路由導向前端 index.html（SPA 支援）
+    // 所有非 API 非 health 路由導向前端 index.html（SPA 支援）
     app.use((req: any, res: any, next: any) => {
-      if (req.path.startsWith('/api')) return next();
+      if (req.path.startsWith('/api') || req.path === '/health') return next();
       res.sendFile(join(frontendDist, 'index.html'));
     });
   }
-
-  // Health check 端點（不依賴資料庫，讓 Railway 能快速確認服務存活）
-  const httpAdapter = app.getHttpAdapter();
-  httpAdapter.get('/health', (req: any, res: any) => {
-    res.status(200).json({ status: 'ok', uptime: process.uptime() });
-  });
 
   // Railway 會透過 PORT 環境變數動態分配 port
   const port = parseInt(process.env.PORT || config.get('SERVER_PORT', '3000'), 10);
